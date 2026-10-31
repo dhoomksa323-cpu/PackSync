@@ -219,7 +219,7 @@ public final class ServerHandler {
     private static void kickOutdated(ServerPlayer player) {
         LOG.info("[PackSync] {} has an outdated pack — sent to the update screen", player.getGameProfile().getName());
         player.connection.disconnect(Component.translatableWithFallback("packsync.kick.outdated",
-                "Your modpack is out of date. Install the update, then rejoin.\nالمودباك عندك قديم، ثبّت التحديث وارجع ادخل."));
+                "المودباك عندك قديم — اضغط تثبيت التحديث."));
     }
 
     static Component missingModMessage() {

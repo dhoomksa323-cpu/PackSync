@@ -111,9 +111,12 @@ public final class Manifest {
     public static Verified open(byte[] envelopeBytes, PublicKey key) throws IOException {
         Envelope env;
         try {
-            env = Json.GSON.fromJson(new String(envelopeBytes, StandardCharsets.UTF_8), Envelope.class);
+            String text = new String(envelopeBytes, StandardCharsets.UTF_8).strip();
+            if (!text.isEmpty() && text.charAt(0) == '\uFEFF') text = text.substring(1);
+            env = Json.GSON.fromJson(text, Envelope.class);
         } catch (RuntimeException e) {
-            throw new IOException("Manifest is not valid JSON");
+            String head = new String(envelopeBytes, 0, Math.min(80, envelopeBytes.length), StandardCharsets.UTF_8).replaceAll("\\s+", " ");
+            throw new IOException("Manifest is not valid JSON (" + envelopeBytes.length + " bytes: " + head + ") " + e.getClass().getSimpleName() + ": " + e.getMessage());
         }
         if (env == null || env.payload == null || env.signature == null) throw new IOException("Manifest envelope incomplete");
         byte[] payload;
