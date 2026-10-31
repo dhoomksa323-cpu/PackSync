@@ -4,6 +4,9 @@ on:
   push:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -24,3 +27,12 @@ jobs:
         with:
           name: PackSync-mod
           path: build/libs/packsync-*.jar
+
+      - name: Publish download link
+        if: github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: PackSync (latest)
+          make_latest: true
+          files: build/libs/packsync-*.jar
