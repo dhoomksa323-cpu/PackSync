@@ -183,7 +183,8 @@ public final class ServerHandler {
         VERIFIED.remove(player.getUUID());
         PENDING.put(player.getUUID(), System.currentTimeMillis() + config.verifyTimeoutSeconds * 1000L);
         Network.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player),
-                new Network.Hello(cur.hash(), cur.manifest().version, cur.manifest().packName));
+                new Network.Hello(cur.hash(), cur.manifest().version, cur.manifest().packName,
+                        config.effectiveBaseUrl(), publisher.publicKey(), config.publicAddress.trim()));
     }
 
     private static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {

@@ -131,6 +131,20 @@ public final class ClientEvents {
         Minecraft mc = Minecraft.getInstance();
         ServerData sd = mc.getCurrentServer();
         if (sd != null && sd.ip != null && !sd.ip.isBlank()) lastServerAddress = sd.ip;
+        // Zero setup: first time we meet a PackSync server, take its update address + key from it.
+        try {
+            if (!UpdateChecker.loadClientConfig(gameDir()).isUsable() && !hello.baseUrl().isBlank() && !hello.publicKey().isBlank()) {
+                com.packsync.core.PackClientConfig c = new com.packsync.core.PackClientConfig();
+                c.packName = hello.packName();
+                c.manifestUrl = hello.baseUrl() + "/manifest.json";
+                c.publicKey = hello.publicKey();
+                c.serverAddress = hello.serverAddress().isBlank() && sd != null ? sd.ip : hello.serverAddress();
+                com.packsync.core.Json.write(gameDir().resolve(com.packsync.core.PackClientConfig.PATH), c);
+                PackSync.LOG.info("[PackSync] Auto-configured from server: {}", hello.baseUrl());
+            }
+        } catch (Exception e) {
+            PackSync.LOG.warn("[PackSync] could not auto-configure", e);
+        }
         String modVersion = ModList.get().getModContainerById(PackSync.MODID)
                 .map(c -> c.getModInfo().getVersion().toString()).orElse("?");
         checkAsync(hello.manifestHash()).thenAccept(r -> mc.execute(() -> {

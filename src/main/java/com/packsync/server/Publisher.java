@@ -158,6 +158,7 @@ public final class Publisher {
                     return FileVisitResult.CONTINUE;
                 }
                 if (!keys.add(PathRules.key(rel))) return FileVisitResult.CONTINUE; // already provided by packsync/pack
+                if (prefix.equals("mods/") && isServerOnlyMod(file)) return FileVisitResult.CONTINUE;
                 boolean once = com.packsync.core.Globs.matchesAny(cfg.installOnce, rel);
                 out.put(rel, new PackFile(rel, file, Hashing.sha256(file), attrs.size(), once));
                 return FileVisitResult.CONTINUE;
@@ -169,6 +170,19 @@ public final class Publisher {
                 return FileVisitResult.CONTINUE;
             }
         });
+    }
+
+    /** A mod that declares displayTest IGNORE_ALL_VERSION is server-only: players don't get it. */
+    static boolean isServerOnlyMod(Path jar) {
+        if (!jar.getFileName().toString().toLowerCase(java.util.Locale.ROOT).endsWith(".jar")) return false;
+        try (java.util.zip.ZipFile z = new java.util.zip.ZipFile(jar.toFile())) {
+            java.util.zip.ZipEntry e = z.getEntry("META-INF/mods.toml");
+            if (e == null) return false;
+            String toml = new String(z.getInputStream(e).readAllBytes(), StandardCharsets.UTF_8).replace(" ", "");
+            return toml.contains("displayTest=\"IGNORE_ALL_VERSION\"");
+        } catch (Exception ex) {
+            return false;
+        }
     }
 
     private byte[] clientConfigBytes() {

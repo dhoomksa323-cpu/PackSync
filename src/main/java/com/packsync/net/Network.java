@@ -14,7 +14,7 @@ import net.minecraftforge.network.simple.SimpleChannel;
 import java.util.function.Supplier;
 
 public final class Network {
-    public static final String PROTOCOL = "1";
+    public static final String PROTOCOL = "2";
 
     /**
      * Missing-on-the-other-side is accepted at the Forge handshake on purpose: the server then
@@ -43,15 +43,18 @@ public final class Network {
     }
 
     /** Server → client: "this is the pack version I expect". */
-    public record Hello(String manifestHash, int version, String packName) {
+    public record Hello(String manifestHash, int version, String packName, String baseUrl, String publicKey, String serverAddress) {
         public void encode(FriendlyByteBuf buf) {
             buf.writeUtf(manifestHash, 128);
             buf.writeVarInt(version);
             buf.writeUtf(packName, 256);
+            buf.writeUtf(baseUrl, 1024);
+            buf.writeUtf(publicKey, 4096);
+            buf.writeUtf(serverAddress, 256);
         }
 
         public static Hello decode(FriendlyByteBuf buf) {
-            return new Hello(buf.readUtf(128), buf.readVarInt(), buf.readUtf(256));
+            return new Hello(buf.readUtf(128), buf.readVarInt(), buf.readUtf(256), buf.readUtf(1024), buf.readUtf(4096), buf.readUtf(256));
         }
 
         public void handle(Supplier<NetworkEvent.Context> ctx) {
