@@ -179,7 +179,9 @@ public final class Publisher {
             java.util.zip.ZipEntry e = z.getEntry("META-INF/mods.toml");
             if (e == null) return false;
             String toml = new String(z.getInputStream(e).readAllBytes(), StandardCharsets.UTF_8).replace(" ", "");
-            return toml.contains("displayTest=\"IGNORE_ALL_VERSION\"");
+            // Only mods that load on the SERVER side alone (minecraft dependency side="SERVER")
+            // and never mention CLIENT/BOTH are treated as server-only.
+            return toml.contains("side=\"SERVER\"") && !toml.contains("side=\"BOTH\"") && !toml.contains("side=\"CLIENT\"");
         } catch (Exception ex) {
             return false;
         }
