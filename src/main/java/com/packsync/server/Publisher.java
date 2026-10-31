@@ -255,6 +255,7 @@ public final class Publisher {
             for (PackFile f : files) store(f.source(), f.sha256());
             Path ccStore = filesDir.resolve(ccSha);
             if (!Files.exists(ccStore)) IO.atomicWrite(ccStore, cc);
+            IO.atomicWrite(webDir.resolve("packsync-client.json"), cc);
 
             next.version = current == null ? 1 : current.manifest().version + 1;
             next.created = Instant.now().truncatedTo(ChronoUnit.SECONDS).toString();

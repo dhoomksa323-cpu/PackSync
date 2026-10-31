@@ -173,6 +173,7 @@ public final class WebServer implements Closeable {
             } else {
                 switch (path) {
                     case "/manifest.json" -> { file = webRoot.resolve("manifest.json"); type = "application/json"; cache = "no-cache"; }
+                    case "/packsync-client.json" -> { file = webRoot.resolve("packsync-client.json"); type = "application/json"; cache = "no-cache"; }
                     case "/pack.zip" -> { file = webRoot.resolve("pack.zip"); type = "application/zip"; cache = "no-cache"; }
                     case "/", "/index.html" -> { file = webRoot.resolve("index.html"); type = "text/html; charset=utf-8"; cache = "no-cache"; }
                     case "/health" -> {

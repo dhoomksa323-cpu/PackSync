@@ -93,7 +93,7 @@ public final class ClientEvents {
             return;
         }
 
-        if (next instanceof DisconnectedScreen) {
+        if (next instanceof DisconnectedScreen || (next != null && next.getClass().getSimpleName().equals("ModMismatchDisconnectedScreen"))) {
             if (serverSaidOutdated) {
                 serverSaidOutdated = false;
                 event.setNewScreen(UpdateScreen.checking(next, true));
