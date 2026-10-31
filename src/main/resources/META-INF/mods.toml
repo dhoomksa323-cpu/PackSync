@@ -1,0 +1,29 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="MIT"
+issueTrackerURL=""
+
+[[mods]]
+modId="packsync"
+version="1.0.0"
+displayName="PackSync"
+authors="Server Admin"
+description='''
+Auto-updating modpack for your Forge 1.20.1 server.
+The admin publishes a new pack version, players get an "Install update" screen,
+the game restarts and everything is installed — signed, verified and with automatic rollback.
+'''
+
+[[dependencies.packsync]]
+    modId="forge"
+    mandatory=true
+    versionRange="[47,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.packsync]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20.1,1.20.2)"
+    ordering="NONE"
+    side="BOTH"
